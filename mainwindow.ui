@@ -70,7 +70,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Граф</string>
+     <string>Graph</string>
     </property>
    </widget>
    <widget class="QGraphicsView" name="graphicsView">
@@ -88,7 +88,7 @@
      <rect>
       <x>21</x>
       <y>11</y>
-      <width>221</width>
+      <width>234</width>
       <height>36</height>
      </rect>
     </property>
@@ -102,7 +102,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Кількість вершин</string>
+        <string>Number of vertices</string>
        </property>
       </widget>
      </item>
@@ -153,7 +153,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Розфарбувати вершини</string>
+     <string>Color vertices</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_5">
@@ -172,7 +172,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Розфарбувати ребра</string>
+     <string>Color edges</string>
     </property>
    </widget>
   </widget>
