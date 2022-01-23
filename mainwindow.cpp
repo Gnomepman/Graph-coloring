@@ -3,21 +3,21 @@
 #include "QGraphicsTextItem"
 #include <set>
 
-//можем контролировать радиус вершины и радиус в т.н. уравнении круга
+//can control radius of vertices and distance between them
 #define ellipseRadius 30
 #define radius 120
 
-//кисти, ручки
+//brushes, pens
 QBrush whiteBrush(Qt::white);
 
 QPen bluepen(Qt::blue);
 QPen graypen(Qt::gray);
 QPen bluepenDot(Qt::blue);
 
-//два вектора с цветами для ребёр и вершин
+//two vectors for colors for edges and vertices
 std::vector <QBrush> brushesForVertices;
 std::vector <QPen> pensForEdges;
-
+//vector to store all connections
 std::vector <Connections> edges;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     scene->clearFocus();
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
-    ui->graphicsView->setRenderHint(QPainter::Antialiasing);//сглаживание в сцене (кайф)
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);//anti-aliasing in scene
 
     graypen.setWidth(3);
     bluepen.setWidth(2);
@@ -46,7 +46,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//функция для построения вершин
+//function for building vertices
 void MainWindow::paintVerticies(int numberOfverticies){
     if (numberOfverticies==0)
         return;
@@ -57,7 +57,7 @@ void MainWindow::paintVerticies(int numberOfverticies){
     }
 };
 
-//функция для построения одной вершины с определённым цветом
+//function for building one vertex with specific color
 void MainWindow::paintVerticies(int position, QBrush brush){
     if (position==0){
         return;
@@ -91,7 +91,7 @@ void MainWindow::on_pushButton_clicked()
     ui->spinBox->setValue(0);
 }
 
-//Построить граф из матрицы
+//build graph from matrix
 void MainWindow::on_pushButton_2_clicked()
 {
     edges.clear();
@@ -104,7 +104,7 @@ void MainWindow::on_pushButton_2_clicked()
         brushesForVertices.push_back(tempB);
     }
 
-    //проходим по таблице, запоминаем связи между вершинами
+    //going threw table, remembering all connections
     for(int i=0; i<ui->tableSum->rowCount(); ++i){
         for(int j=0; j<ui->tableSum->rowCount(); ++j){
             if (i>j){//проход только выше главной диагонали, т.к. граф неориентированный
@@ -119,7 +119,7 @@ void MainWindow::on_pushButton_2_clicked()
         }
     }
 
-    //для каждой связи в векторе, строим рёбра
+    //for every connection build edge
     for (Connections item : edges) {
         if(item.first==item.second){
             scene->addEllipse(radius*cos(item.first)-5,radius*sin(item.second)-5,ellipseRadius+5,ellipseRadius+5,bluepenDot);
@@ -128,11 +128,10 @@ void MainWindow::on_pushButton_2_clicked()
                            radius*cos(item.second)+7,radius*sin(item.second)+3,bluepen);
         }
     }
-    //после рёбер строим поверх вершины
+    //then build vertices on top of edges
     paintVerticies(ui->tableSum->columnCount());
 }
 
-//при нажатии на клетку добавит зеркальный элемент
 void MainWindow::on_tableSum_cellClicked(int row, int column)
 {
     QTableWidgetItem *mirrored = new QTableWidgetItem();
@@ -233,10 +232,10 @@ static bool contains(int value, std::vector<int> vec){
     return false;
 }
 
-//разукрасить вершины
+//color vertices
 void MainWindow::on_pushButton_4_clicked()
 {
-    //генерируем случайные цвета, n = количеству вершин
+    //generating random color, n = number of vertices
     brushesForVertices.clear();
     for (int i=0 ; i < ui->tableSum->rowCount(); ++i){
         QBrush temp(QColor(rand()%256,rand()%256,rand()%256));
@@ -251,7 +250,7 @@ void MainWindow::on_pushButton_4_clicked()
     }
     scene->clear();
 
-    //сначала строим рёбра, поверх них будем строить вершины
+    //build edges first, will build colored vertices on top
     for (Connections item : edges) {
         if(item.first==item.second){
             scene->addEllipse(radius*cos(item.first)-5,radius*sin(item.second)-5,ellipseRadius+5,ellipseRadius+5,bluepenDot);
@@ -261,12 +260,12 @@ void MainWindow::on_pushButton_4_clicked()
         }
     }
 
-    //скопируем все связи во временный вектор
+    //copying all connections in temporary vector
     std::vector <Connections> tempEdges=edges;
 
-    std::set <int> usedVertices;//тут хранятся вершины, которые надо разукрасить
-    std::vector <int> paintedVertices;//тут будут храниться разукрашенные вершины
-    std::vector <int> bannedVertices;//тут будут временно храниться вершины, которые пока не надо разукрашивать
+    std::set <int> usedVertices;//here will be stored vertices, that needs to be painted
+    std::vector <int> paintedVertices;//here will be stored already painted vertices
+    std::vector <int> bannedVertices;//here will be stored which temporary will not be bainted
     for(int i = 0; i < (int) tempEdges.size(); i++){
         usedVertices.insert(tempEdges[i].first);
         usedVertices.insert(tempEdges[i].second);
@@ -280,7 +279,7 @@ void MainWindow::on_pushButton_4_clicked()
     }while(!usedVertices.empty());
 }
 
-//поиск следующей вершины для покраски
+//search for next vertex to be painted
 void MainWindow::findNextVertex (int &currentVert, std::vector <int> &bannedVertices,
                      std::vector <Connections> &tempEdges, std::set <int> &usedVertices, std::vector <int> &paintedVertices){
 
@@ -322,7 +321,7 @@ void MainWindow::findNextVertex (int &currentVert, std::vector <int> &bannedVert
     }
 }
 
-//разукрасить рёбра
+//Color edges
 void MainWindow::on_pushButton_5_clicked()
 {
     if(edges.empty()){
@@ -350,13 +349,13 @@ void MainWindow::on_pushButton_5_clicked()
     paintVerticies(ui->tableSum->columnCount());
 }
 
-//построить ребро с определённым цветом
+//build edge with specific color
 void MainWindow::buildEdge(int x, int y, QPen pen){
     scene->addLine(radius*cos(x)+7,radius*sin(x)+3,
                    radius*cos(y)+7,radius*sin(y)+3,pen);
 }
 
-//поиск следующего ребра для покраски
+//search for next edge to be painted
 void MainWindow::findNextEdge(int &first,int &second, std::vector <int> &bannedVertices,
                               std::vector <Connections> &tempEdges){
     buildEdge(first,second,pensForEdges[0]);
