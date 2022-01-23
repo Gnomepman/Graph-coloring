@@ -41,8 +41,6 @@ private slots:
 
     void on_pushButton_3_clicked();
 
-    bool canBuildEilerCycle();
-
     void on_pushButton_4_clicked();
 
     void findNextVertex (int &currentVert, std::vector <int> &bannedVertices,
